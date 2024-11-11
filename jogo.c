@@ -167,7 +167,7 @@ void printmenu(int colunas, char*palavra) // Funcao usada no rank para colocar a
 
 int jogo()
 {
-    int contador = 0;
+    int contador = 1;
     struct ranks* first = 0;
     int temp;
     char ntemp[10];
@@ -188,6 +188,7 @@ int jogo()
         first = organizar(first, temp,ntemp);
         contador+=1;
     }
+    first = organizar(first, pontos, nome);
     fclose(rank);
     rank = fopen("ranks.bin", "wb");
     for (int i = 0; i < contador; ++i)
@@ -196,8 +197,6 @@ int jogo()
         fwrite(&first->rank, sizeof(int),1,rank);
         first = first->next;
     }
-    fwrite(&nome, sizeof(char),10,rank);
-    fwrite(&pontos, sizeof(int),1,rank);
     fclose(rank);
 }
 
@@ -390,7 +389,7 @@ struct ranks* organizar(struct ranks*first, int rank, char * nome)
     }
     else
     {
-        if (first->rank > rank)
+        if (first->rank < rank)
         {
             temp = malloc(sizeof(struct ranks));
             temp->rank = rank;

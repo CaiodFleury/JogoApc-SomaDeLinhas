@@ -25,7 +25,7 @@ void printmenu(int colunas, char*palavra);
 // Coisas do Jogo:
 int jogo();
 int administrarniveis(int dificuldade);
-int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade], int selecionado);
+int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade],int matrizresp[dificuldade][dificuldade] ,int selecionado);
 void perguntarnomejogo(char *palavra);
 
 //Coisa dos ranks:
@@ -176,7 +176,7 @@ int jogo()
     system("cls");
     int pontos = 0;
     int nivel = 0;
-    while (administrarniveis(10+nivel))
+    while (administrarniveis(3+nivel))
     {
         nivel+=1;
         pontos += nivel*10;
@@ -202,15 +202,27 @@ int jogo()
 
 int administrarniveis(int dificuldade)
 {
+    int vidas = 3;
+    int eliminados = 0;
     int n;
     int atualizar = 1;
     int selecionado = 0;
     int matriz[dificuldade][dificuldade];
+    int matrizresp[dificuldade][dificuldade];
     for (int i = 0; i < dificuldade; ++i)
     {
         for (int j = 0; j < dificuldade; ++j)
         {
             matriz[i][j] = rand() % 10;
+            while(matriz[i][j] == 0)
+            {
+                matriz[i][j] = rand() % 10;
+            }
+            matrizresp[i][j] = rand() % 2;
+            if (matrizresp[i][j] == 0)
+            {
+                eliminados+=1;
+            }
         }
     }
     while (1)
@@ -218,7 +230,7 @@ int administrarniveis(int dificuldade)
 
         if (atualizar == 1)
         {
-            construirjogo(dificuldade, matriz, selecionado);
+            construirjogo(dificuldade, matriz,matrizresp ,selecionado);
             atualizar = 0;
         }
 
@@ -262,6 +274,33 @@ int administrarniveis(int dificuldade)
                     }
                 break;
 
+                case 13:
+                    if (matrizresp[selecionado/dificuldade][selecionado%dificuldade] == 0)
+                    {
+                        if (matriz[selecionado/dificuldade][selecionado%dificuldade] != 0)
+                        {
+                            matriz[selecionado/dificuldade][selecionado%dificuldade] = 0;
+                            eliminados-=1;
+                            atualizar = 1;
+                            if (eliminados == 0)
+                            {
+                                return 1;
+                            }
+                        }
+                    }
+                    else if (matrizresp[selecionado/dificuldade][selecionado%dificuldade] == 1)
+                    {
+                        matriz[selecionado/dificuldade][selecionado%dificuldade] = 2;
+                        vidas -=1;
+                        atualizar = 1;
+                        if (vidas == 0)
+                        {
+                            return 0;
+                        }
+                    }
+                    
+                break;
+
                 case 's':
                     return 0;
                 break;
@@ -271,7 +310,7 @@ int administrarniveis(int dificuldade)
     return 0;
 }
 
-int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade], int selecionado)
+int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade],int matrizresp[dificuldade][dificuldade], int selecionado)
 {
     // i muda a linha j muda a coluna
     system("cls");
@@ -282,7 +321,10 @@ int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade], int sel
     {
         for (int j = 0; j < dificuldade; ++j)
         {
-            total += matriz[i][j];
+            if (matrizresp[i][j] == 1)
+            {
+                total += matriz[i][j];
+            }
         }
         tmatrizlado[i] = total;
         total = 0;
@@ -291,7 +333,10 @@ int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade], int sel
     {
         for (int j = 0; j < dificuldade; ++j)
         {
-            total += matriz[j][i];
+            if (matrizresp[j][i] == 1)
+            {
+                total += matriz[j][i];
+            }
         }
         tmatrizcima[i] = total;
         total = 0;

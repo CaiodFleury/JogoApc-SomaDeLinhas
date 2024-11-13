@@ -398,7 +398,15 @@ int construirjogo(int dificuldade, int matriz[dificuldade][dificuldade],int matr
             {
                 if (matriz[i - 2][j - 2] == 0)
                 {
-                    printf("   ");
+                    if ((i - 2)*dificuldade + j - 2 == selecionado)
+                    {
+                        printf("[ ]");
+                    }
+                    else
+                    {
+                        printf("   ");
+                    }
+                    
                 }
                 else if ((i - 2)*dificuldade + j - 2 == selecionado)
                 {
